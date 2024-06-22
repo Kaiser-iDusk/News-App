@@ -1,0 +1,48 @@
+{% extends 'index.html' %}
+
+{% block news %}
+
+    <div class="container" style="margin-top:2%; margin-bottom:3%; font-family: monospace; background-color: darkgray; color: black; border-radius: 40px; padding: 5%">
+        {% if username %}
+            <h1 class="h3 mb-3 font-weight-normal" style="margin-left: 31%">
+                About : {{ current_user.username }}
+            </h1>
+            
+            <div class="body">
+                <h4>
+                    Userame : {{ username }}
+                </h4>
+                <br>
+                <h4>
+                    e-mail id : {{ details.email }}
+                </h4>
+                <br>
+                <h4>
+                    Language Prefered : 
+                </h4>
+                <br>
+                <h4>
+                    Country : 
+                </h4>
+                <br>
+                <h4>
+                    Tech News : {{ details.technology }}
+                </h4>
+                <br>
+                <h4>
+                    Business News : {{ details.business }} 
+                </h4>
+                <br>
+                <h4>
+                    Sports News : {{ details.sports }} 
+                </h4>
+                <br>
+            </div>
+        {% else %}
+            <h1 class="h3 mb-3 font-weight-normal" style="margin-left: 31%">
+                User name not found!
+            </h1>
+        {% endif %}
+    </div>
+
+{% endblock %}
