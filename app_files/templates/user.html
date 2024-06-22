@@ -17,26 +17,66 @@
                     e-mail id : {{ details.email }}
                 </h4>
                 <br>
-                <h4>
-                    Language Prefered : 
-                </h4>
+                <div class="row" style="display: contents;">
+                    <div class="content1">
+                        <h4>
+                            Language Prefered : {{ lang[details.language] }}
+                        </h4>
+                    </div>
+                    <form method="post" class="form-register" style="color:black; margin-top:-5vw; margin-left:50vw; margin-bottom:3vw;">
+                        {{ form1.hidden_tag() }}
+                        {{ form1.language.label() }}
+                        {{ form1.language(class="form-control", style="margin-bottom: 1%;", placeholder="English") }}
+                        <br>
+                        {{ form1.submit(class="btn btn-lg btn-block btn-primary") }}
+                    </form>
+                </div>
                 <br>
-                <h4>
-                    Country : 
-                </h4>
+                <div class="row" style="display: contents;">
+                    <div class="content1">
+                        <h4>
+                            Country : {{ cnt[details.country] }}
+                        </h4>
+                    </div>
+                    <form method="post" class="form-register" style="color:black; margin-top:-5vw; margin-left:50vw;">
+                        {{ form2.hidden_tag() }}
+                        {{ form2.country.label() }}
+                        {{ form2.country(class="form-control", style="margin-bottom: 1%;", placeholder="India") }}
+                        <br>
+                        {{ form2.submit(class="btn btn-lg btn-block btn-primary") }}
+                    </form>
+                </div>
                 <br>
-                <h4>
-                    Tech News : {{ details.technology }}
-                </h4>
-                <br>
-                <h4>
-                    Business News : {{ details.business }} 
-                </h4>
-                <br>
-                <h4>
-                    Sports News : {{ details.sports }} 
-                </h4>
-                <br>
+                <div class="row" style="display: inline-flex; margin-top: 2vw;">
+                    <div class="column" style="padding-left: 5vw; margin-left: 5vw;">
+                        <h4>
+                            Tech News : {{ details.technology }}
+                        </h4>
+                        <br>
+                        <h4>
+                            Business News : {{ details.business }} 
+                        </h4>
+                        <br>
+                        <h4>
+                            Sports News : {{ details.sports }} 
+                        </h4>
+                        <br>
+                    </div>
+                    <div class="column" style="padding-right: 5vw; margin-left: 15vw;">
+                        <h4>
+                            Science News : {{ details.science }}
+                        </h4>
+                        <br>
+                        <h4>
+                            Health News : {{ details.health }} 
+                        </h4>
+                        <br>
+                        <h4>
+                            Entertainment News : {{ details.entertainment }} 
+                        </h4>
+                        <br>
+                    </div>
+                </div>
             </div>
         {% else %}
             <h1 class="h3 mb-3 font-weight-normal" style="margin-left: 31%">

@@ -17,6 +17,9 @@
             {{ form.country.label() }}
             {{ form.country(class="form-control", style="margin-bottom: 1%;", placeholder="India") }}
 
+            {{ form.language.label() }}
+            {{ form.language(class="form-control", style="margin-bottom: 1%;", placeholder="English") }}
+
             {{ form.pwd1.label()}}
             {{ form.pwd1(class="form-control", style="margin-bottom: 1%;", placeholder="Some Random Password") }}
 
@@ -25,10 +28,10 @@
             
             <br>
 
-            <!--<div class="checkbox mb-3">
+            <div class="checkbox mb-3">
                 <h6>Have an account?</h6>
-                <a class="btn btn-sm btn-secondary" href="{{ url_for('home' )}}">Login here</a>
-            </div>-->
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page')}}">Login here</a>
+            </div>
 
             {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
         </form>

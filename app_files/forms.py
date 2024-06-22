@@ -9,6 +9,11 @@ country_choices = [("au", "Australia"), ("br", "Brazil"), ("ca", "Canada"), ("cn
                    ("no", "Norway"), ("ph", "Phillipines"), ("pt", "Portugal"), ("ro", "Romania"), ("ru", "Russia"), 
                    ("sg", "Singapore"), ("tw", "Taiwan"), ("ua", "Ukraine"), ("us", "USA"), ("ch", "Switzerland")]
 
+lang_choices = [("ar", "Arabic"), ("zh", "Chinese"), ("nl", "Dutch"), ("en", "English"), ("es", "Spanish"), ("hi", "Hindi"),
+                ("fr", "French"), ("de", "German"), ("el", "Greek"), ("he", "Hebrew"), ("it", "Italian"), ("ja", "Japanese"),
+                ("ml", "Malayalam"), ("mr", "Marathi"), ("no", "Norwegian"), ("pt", "Portuguese"), ("ro", "Romanian"),
+                ("ru", "Russian"), ("sv", "Swedish"), ("ta", "Tamil"), ("te", "Telugu"), ("uk", "Ukrainian")]
+
 class RegisterForm(FlaskForm):
     def validate_username(self, uname_to_check):
         user = User.query.filter_by(username=uname_to_check.data).first()
@@ -23,6 +28,7 @@ class RegisterForm(FlaskForm):
     username = StringField(label='User Name:', validators=[Length(min=2, max=30), DataRequired()])
     email = StringField(label='e-Mail Address: ', validators=[Email(), DataRequired()])
     country = SelectField(label='Country', choices= country_choices, validators=[DataRequired()])
+    language = SelectField(label='Language', choices= lang_choices, validators=[DataRequired()])
     pwd1 = PasswordField(label='Password: ', validators=[Length(min=6), DataRequired()])
     pwd2 = PasswordField(label='Confirm Password: ', validators=[EqualTo('pwd1'), DataRequired()])
 
@@ -33,3 +39,11 @@ class LoginForm(FlaskForm):
     password = PasswordField(label='Enter Password: ', validators=[Length(min=6), DataRequired()])
 
     submit = SubmitField(label='Sign In')
+
+class UpdateLanguageForm(FlaskForm):
+    language = SelectField(label='Language', choices= lang_choices)
+    submit = SubmitField(label='Apply Changes')
+
+class UpdateCountryForm(FlaskForm):
+    country = SelectField(label='Country', choices= country_choices)
+    submit = SubmitField(label='Apply Changes')

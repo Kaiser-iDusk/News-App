@@ -1,7 +1,7 @@
 from app_files import app, db
 from flask import render_template, redirect, url_for, flash, request
 from app_files.models import User
-from app_files.forms import RegisterForm, LoginForm
+from app_files.forms import RegisterForm, LoginForm, UpdateLanguageForm, UpdateCountryForm
 from flask_login import login_user, logout_user, login_required, current_user
 import requests
 
@@ -12,14 +12,19 @@ def home():
         "world": "World News",
         "technology": "Technology Headlines",
         "business": "Business Headlines",
-        "sports": "Sports Headlines"
+        "sports": "Sports Headlines",
+        "entertainment": "Entertainment Headlines",
+        "science": "Science Headlines",
+        "health": "Health Headlines"
     }
     #api = https://newsapi.org/v2/top-headlines?country=in&category=general&apiKey=b3ea79f80b1d46709c149fd8d0557842
     #api = https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=in&apikey=1005d0c5922fe20336ea32145027ba94
     ip_country = "in"
+    ip_language = "en"
     if current_user.is_authenticated:
         ip_country = current_user.country
-    req = requests.get("https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=" + ip_country + "&apikey=1005d0c5922fe20336ea32145027ba94").json()
+        ip_language = current_user.language
+    req = requests.get("https://gnews.io/api/v4/top-headlines?category=general&lang=" + ip_language + "&country=" + ip_country + "&apikey=1005d0c5922fe20336ea32145027ba94").json()
     cases = req['articles']
     category = "None"
     header = "Headlines"
@@ -32,13 +37,19 @@ def home():
                 current_user.technology += 1
             elif category == "business":
                 current_user.business += 1
+            elif category == "entertainment":
+                current_user.entertainment += 1
+            elif category == "science":
+                current_user.science += 1
+            elif category == "health":
+                current_user.health += 1
             elif category == "sports":
                 current_user.sports += 1
             db.session.commit()
 
         header = keys[category]
 
-        url = "https://gnews.io/api/v4/top-headlines?category=" + category + "&lang=en&country=" + ip_country + "&apikey=1005d0c5922fe20336ea32145027ba94"
+        url = "https://gnews.io/api/v4/top-headlines?category=" + category + "&lang=" + ip_language + "&country=" + ip_country + "&apikey=1005d0c5922fe20336ea32145027ba94"
         # url = "https://newsapi.org/v2/top-headlines?country=" + ip_country + "&category=" + category + "&apiKey=b3ea79f80b1d46709c149fd8d0557842"
         req = requests.get(url).json()
         cases = req['articles']
@@ -53,6 +64,7 @@ def register_page():
         user_to_create = User(username=form.username.data,
                               email=form.email.data,
                               country=form.country.data,
+                              language=form.language.data,
                               password=form.pwd1.data)
         db.session.add(user_to_create)
         db.session.commit()
@@ -86,13 +98,41 @@ def logout_page():
     flash('You have been logged out!', category='info')
     return redirect(url_for("home"))
 
-@app.route('/about/<username>')
+@app.route('/about/<username>', methods=['GET', 'POST'])
 def user_page(username):
+    form1 = UpdateLanguageForm()
+    form2 = UpdateCountryForm()
+
     handle = User.query.filter_by(username=username).first()
 
+    lang = dict([("ar", "Arabic"), ("zh", "Chinese"), ("nl", "Dutch"), ("en", "English"), ("es", "Spanish"), ("hi", "Hindi"),
+                ("fr", "French"), ("de", "German"), ("el", "Greek"), ("he", "Hebrew"), ("it", "Italian"), ("ja", "Japanese"),
+                ("ml", "Malayalam"), ("mr", "Marathi"), ("no", "Norwegian"), ("pt", "Portuguese"), ("ro", "Romanian"),
+                ("ru", "Russian"), ("sv", "Swedish"), ("ta", "Tamil"), ("te", "Telugu"), ("uk", "Ukrainian")])
+    
+    # print(lang)
+    cnt = dict([("au", "Australia"), ("br", "Brazil"), ("ca", "Canada"), ("cn", "China"), ("de", "Germany"), 
+                ("eg", "Egypt"), ("fr", "France"), ("gb", "United Kingdom"), ("gr", "Greece"), ("hk", "Hong Kong"), 
+                ("ie", "Ireland"), ("il", "Israel"), ("in", "India"), ("it", "Italy"), ("jp", "Japan"), ("nl", "Netherlands"), 
+                ("no", "Norway"), ("ph", "Phillipines"), ("pt", "Portugal"), ("ro", "Romania"), ("ru", "Russia"), 
+                ("sg", "Singapore"), ("tw", "Taiwan"), ("ua", "Ukraine"), ("us", "USA"), ("ch", "Switzerland")])
+
     if handle:
-        return render_template('user.html', username=username, details=handle)
+        if request.method == "POST":
+            if form1.validate_on_submit():
+                handle.language = form1.language.data
+                db.session.commit()
+                flash(f'Your language has been updated to: {handle.language}', category='success')
+                # return render_template('user.html', username=username, details=handle, lang=lang, cnt=cnt)
+
+            if form2.validate_on_submit():
+                handle.country = form2.country.data
+                db.session.commit()
+                flash(f'Your country has been updated to: {handle.country}', category='success')
+                # return render_template('user.html', username=username, details=handle, lang=lang, cnt=cnt)
+            return render_template('user.html', username=username, details=handle, lang=lang, cnt=cnt, form1=form1, form2=form2)
+        return render_template('user.html', username=username, details=handle, lang=lang, cnt=cnt, form1=form1, form2=form2)
     else:
         flash(f'No user with username: {username} exists!', category="info")
-        return render_template('user.html', username=None, details=handle)
+        return render_template('user.html', username=None, details=handle, lang=lang, cnt=cnt, form1=form1, form2=form2)
 
