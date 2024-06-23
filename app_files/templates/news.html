@@ -1,5 +1,20 @@
 {% extends 'index.html' %}
 
+{% block search %}
+    {% if current_user.is_authenticated %}
+    <ul class="navbar-nav" style="padding-right:30vw;">
+        <li class="nav-item">
+            <form method="post" class="form-register" style="color:black;display:flex;">
+                {{ sform.hidden_tag() }}
+                {{ sform.query.label() }}
+                {{ sform.query(class="form-control rounded", placeholder="Search") }}
+                {{ sform.submit(class="btn btn-primary") }}
+            </form>
+        </li>
+    </ul>
+    {% endif %}
+{% endblock %}
+
 {% block news %}
 
     <div class = "selectors">

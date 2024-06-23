@@ -47,3 +47,7 @@ class UpdateLanguageForm(FlaskForm):
 class UpdateCountryForm(FlaskForm):
     country = SelectField(label='Country', choices= country_choices)
     submit = SubmitField(label='Apply Changes')
+
+class SearchQueryForm(FlaskForm):
+    query = StringField(label='', validators=[Length(min=0, max=50)])
+    submit = SubmitField(label='Search')

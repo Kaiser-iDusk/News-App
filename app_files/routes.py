@@ -1,13 +1,14 @@
 from app_files import app, db
 from flask import render_template, redirect, url_for, flash, request
 from app_files.models import User
-from app_files.forms import RegisterForm, LoginForm, UpdateLanguageForm, UpdateCountryForm
+from app_files.forms import RegisterForm, LoginForm, UpdateLanguageForm, UpdateCountryForm, SearchQueryForm
 from flask_login import login_user, logout_user, login_required, current_user
 import requests
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/home", methods=["GET", "POST"])
 def home():
+    searchForm = SearchQueryForm()
     keys = {
         "world": "World News",
         "technology": "Technology Headlines",
@@ -24,12 +25,23 @@ def home():
     if current_user.is_authenticated:
         ip_country = current_user.country
         ip_language = current_user.language
+
     req = requests.get("https://gnews.io/api/v4/top-headlines?category=general&lang=" + ip_language + "&country=" + ip_country + "&apikey=1005d0c5922fe20336ea32145027ba94").json()
     cases = req['articles']
     category = "None"
     header = "Headlines"
 
-    if request.method == "POST":
+    if request.method == "POST" and str(searchForm.query.data) != "":
+        search = str(searchForm.query.data)
+        url = "https://newsapi.org/v2/everything?q="+ search +"&sortBy=popularity&lang=en&apiKey=b3ea79f80b1d46709c149fd8d0557842"
+        req = requests.get(url).json()
+        cases = req['articles']
+        header = "Results: " + str(searchForm.query.data)[:25] + " ..."
+
+        return render_template('news.html', cases= cases, cat= category, header = header, sform = searchForm)
+
+
+    elif request.method == "POST":
         category = list(request.form)[0]
 
         if current_user.is_authenticated:
@@ -53,9 +65,9 @@ def home():
         # url = "https://newsapi.org/v2/top-headlines?country=" + ip_country + "&category=" + category + "&apiKey=b3ea79f80b1d46709c149fd8d0557842"
         req = requests.get(url).json()
         cases = req['articles']
-        return render_template('news.html', cases= cases, cat= category, header = header)
+        return render_template('news.html', cases= cases, cat= category, header = header, sform = searchForm)
     
-    return render_template('news.html', cases= cases, cat= category, header = header)
+    return render_template('news.html', cases= cases, cat= category, header = header, sform = searchForm)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def register_page():
